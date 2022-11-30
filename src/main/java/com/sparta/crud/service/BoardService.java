@@ -17,15 +17,15 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public BoardOneResponserDto createBoard(BoardRequestDto requestDto) {
+    public BoardOneResponserBase createBoard(BoardRequestDto requestDto) {
         Board board = new Board(requestDto);
         boardRepository.save(board);
-        return new BoardOneResponserDto("true", HttpStatus.OK.value(), board);
+        return new BoardOneResponserBase(true, HttpStatus.OK.value(), board);
     }
 
     @Transactional(readOnly = true)
-    public BoardListResponseDto getBoardList() {
-        BoardListResponseDto boardListResponseDto = new BoardListResponseDto("true", HttpStatus.OK.value());
+    public BoardListBaseResponse getBoardList() {
+        BoardListBaseResponse boardListResponseDto = new BoardListBaseResponse(true, HttpStatus.OK.value());
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         for (Board board : boardList) {
             boardListResponseDto.addBoard(new BoardToDto(board));
@@ -34,15 +34,15 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardOneResponserDto getBoard(Long id) {
+    public BoardOneResponserBase getBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        return new BoardOneResponserDto("ture", HttpStatus.OK.value(), board);
+        return new BoardOneResponserBase(true, HttpStatus.OK.value(), board);
     }
 
 //    @Transactional
-    public ResponseDto update(Long id, BoardRequestDto requestDto) {
+    public BaseResponse update(Long id, BoardRequestDto requestDto) {
         // 영속성 Entity 조회
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
@@ -55,17 +55,17 @@ public class BoardService {
             // board를 저장
             Board savedBoard = boardRepository.save(board);
             // Dto로 반환
-            return new BoardOneResponserDto("ture", HttpStatus.OK.value(), savedBoard);
+            return new BoardOneResponserBase(true, HttpStatus.OK.value(), savedBoard);
         }
         // 비밀번호 불일치
         else {
-            return new ResponseDto("false", HttpStatus.NOT_FOUND.value());
+            return new BaseResponse(false, HttpStatus.NOT_FOUND.value());
         }
 
     }
 
     @Transactional
-    public ResponseDto deleteBoard(Long id, BoardRequestDto requestDto) {
+    public BaseResponse deleteBoard(Long id, BoardRequestDto requestDto) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
@@ -75,11 +75,11 @@ public class BoardService {
             // 게시글 삭제
             boardRepository.deleteById(id);
             // ResponseDto로 반환
-            return new ResponseDto("true", HttpStatus.OK.value());
+            return new BaseResponse(true, HttpStatus.OK.value());
         }
         // 비밀번호 불일치
         else {
-            return new ResponseDto("false", HttpStatus.NOT_FOUND.value());
+            return new BaseResponse(false, HttpStatus.NOT_FOUND.value());
         }
     }
 }

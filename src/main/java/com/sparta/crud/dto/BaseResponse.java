@@ -3,11 +3,11 @@ package com.sparta.crud.dto;
 import lombok.Getter;
 
 @Getter
-public class ResponseDto {
-    private String success;
+public class BaseResponse {
+    private Boolean success;
     private int statusCode;
 
-    public ResponseDto(String success, int statusCode) {
+    public BaseResponse(Boolean success, int statusCode) {
         this.success = success;
         this.statusCode = statusCode;
     }
