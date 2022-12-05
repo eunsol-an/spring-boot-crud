@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class BaseResponse {
-    private Boolean success;
-    private int statusCode;
+    public Boolean success;
+    public int statusCode;
 
     public BaseResponse(Boolean success, int statusCode) {
         this.success = success;

@@ -14,19 +14,19 @@ public class BoardController {
 
     // 게시글 작성
     @PostMapping("/board")
-    public BoardOneResponserBase createBorad(@RequestBody BoardRequestDto requestDto) {
+    public BoardOneResponseDto createBorad(@RequestBody BoardRequestDto requestDto) {
         return boardService.createBoard(requestDto);
     }
 
     // 전체 게시글 조회
     @GetMapping("/board")
-    public BoardListBaseResponse getBoardList() {
+    public BoardListResponseDto getBoardList() {
         return boardService.getBoardList();
     }
 
     // 게시글 상세 조회
     @GetMapping("/board/{id}")
-    public BoardOneResponserBase getBoard(@PathVariable Long id) {
+    public BoardOneResponseDto getBoard(@PathVariable Long id) {
         return boardService.getBoard(id);
     }
 

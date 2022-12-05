@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class BoardListBaseResponse extends BaseResponse {
+public class BoardListResponseDto extends BaseResponse {
 
     List<BoardToDto> boradList = new ArrayList<>();
 
-    public BoardListBaseResponse(Boolean success, int statusCode) {
+    public BoardListResponseDto(Boolean success, int statusCode) {
         super(success, statusCode);
     }
 
