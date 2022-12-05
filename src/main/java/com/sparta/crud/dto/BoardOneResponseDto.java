@@ -4,11 +4,11 @@ import com.sparta.crud.entity.Board;
 import lombok.Getter;
 
 @Getter
-public class BoardOneResponserBase extends BaseResponse {
+public class BoardOneResponseDto extends BaseResponse {
 
     BoardToDto boardOne;
 
-    public BoardOneResponserBase(Boolean success, int statusCode, Board board) {
+    public BoardOneResponseDto(Boolean success, int statusCode, Board board) {
         super(success, statusCode);
         this.boardOne = new BoardToDto(board);
     }

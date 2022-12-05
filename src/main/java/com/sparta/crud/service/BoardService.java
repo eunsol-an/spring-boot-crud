@@ -17,15 +17,15 @@ public class BoardService {
     private final BoardRepository boardRepository;
 
     @Transactional
-    public BoardOneResponserBase createBoard(BoardRequestDto requestDto) {
+    public BoardOneResponseDto createBoard(BoardRequestDto requestDto) {
         Board board = new Board(requestDto);
         boardRepository.save(board);
-        return new BoardOneResponserBase(true, HttpStatus.OK.value(), board);
+        return new BoardOneResponseDto(true, HttpStatus.OK.value(), board);
     }
 
     @Transactional(readOnly = true)
-    public BoardListBaseResponse getBoardList() {
-        BoardListBaseResponse boardListResponseDto = new BoardListBaseResponse(true, HttpStatus.OK.value());
+    public BoardListResponseDto getBoardList() {
+        BoardListResponseDto boardListResponseDto = new BoardListResponseDto(true, HttpStatus.OK.value());
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         for (Board board : boardList) {
             boardListResponseDto.addBoard(new BoardToDto(board));
@@ -34,11 +34,11 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardOneResponserBase getBoard(Long id) {
+    public BoardOneResponseDto getBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
-        return new BoardOneResponserBase(true, HttpStatus.OK.value(), board);
+        return new BoardOneResponseDto(true, HttpStatus.OK.value(), board);
     }
 
 //    @Transactional
@@ -55,7 +55,7 @@ public class BoardService {
             // board를 저장
             Board savedBoard = boardRepository.save(board);
             // Dto로 반환
-            return new BoardOneResponserBase(true, HttpStatus.OK.value(), savedBoard);
+            return new BoardOneResponseDto(true, HttpStatus.OK.value(), savedBoard);
         }
         // 비밀번호 불일치
         else {
