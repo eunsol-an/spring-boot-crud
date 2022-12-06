@@ -19,25 +19,22 @@ public class Board extends Timestamped{
     private String title;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String pw;
+    private String username;
 
     @Column(nullable = false)
     private String content;
 
-    public Board(BoardRequestDto requestDto) {
+
+
+    public Board(BoardRequestDto requestDto, String username) {
         this.title = requestDto.getTitle();
-        this.name = requestDto.getName();
-        this.pw = requestDto.getPw();
         this.content = requestDto.getContent();
+        this.username = username;
     }
 
-    public void update(BoardRequestDto requestDto) {
+    public void update(BoardRequestDto requestDto, String username) {
         this.title = requestDto.getTitle();
-        this.name = requestDto.getName();
-        this.pw = requestDto.getPw();
         this.content = requestDto.getContent();
+        this.username = username;
     }
 }
