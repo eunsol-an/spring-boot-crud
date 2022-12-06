@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class BoardToDto {
     private Long id;
     private String title;
-    private String name;
+    private String username;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
@@ -16,7 +16,7 @@ public class BoardToDto {
     public BoardToDto(Board board) {
         this.id = board.getId();
         this.title = board.getTitle();
-        this.name = board.getName();
+        this.username = board.getUsername();
         this.content = board.getContent();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
