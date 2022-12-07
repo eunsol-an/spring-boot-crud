@@ -4,6 +4,7 @@ import com.sparta.crud.dto.*;
 import com.sparta.crud.entity.Board;
 import com.sparta.crud.entity.Comment;
 import com.sparta.crud.entity.User;
+import com.sparta.crud.entity.UserRoleEnum;
 import com.sparta.crud.jwt.JwtUtil;
 import com.sparta.crud.repository.BoardRepository;
 import com.sparta.crud.repository.UserRepository;
@@ -107,11 +108,25 @@ public class BoardService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            // 입력 받은 id, 토큰에서 가져온 username과 일치하는 DB 조회
-            Board board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
-                    () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
-            );
-            board.update(requestDto, user.getUsername());
+            // 사용자 권한 가져와서 ADMIN 이면 무조건 수정 가능, USER 면 본인이 작성한 글일 때만 수정 가능
+            UserRoleEnum userRoleEnum = user.getRole();
+
+            Board board;
+
+            if (userRoleEnum == UserRoleEnum.ADMIN) {
+                // 입력 받은 게시글 id와 일치하는 DB 조회
+                board = boardRepository.findById(id).orElseThrow(
+                        () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                );
+
+            } else {
+                // 입력 받은 게시글 id, 토큰에서 가져온 username과 일치하는 DB 조회
+                board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                        () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
+                );
+            }
+
+            board.update(requestDto);
 
             List<CommentToDto> commentList = new ArrayList<>();
             for (Comment comment : board.getComments()) {
@@ -146,10 +161,24 @@ public class BoardService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            // 입력 받은 id, 토큰에서 가져온 username과 일치하는 DB 조회
-            Board board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
-                    () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
-            );
+            // 사용자 권한 가져와서 ADMIN 이면 무조건 삭제 가능, USER 면 본인이 작성한 글일 때만 삭제 가능
+            UserRoleEnum userRoleEnum = user.getRole();
+
+            Board board;
+
+            if (userRoleEnum == UserRoleEnum.ADMIN) {
+                // 입력 받은 게시글 id와 일치하는 DB 조회
+                board = boardRepository.findById(id).orElseThrow(
+                        () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                );
+
+            } else {
+                // 입력 받은 게시글 id, 토큰에서 가져온 username과 일치하는 DB 조회
+                board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                        () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
+                );
+            }
+
             boardRepository.deleteById(id);
 
             return new BaseResponse(true, HttpStatus.OK.value());
