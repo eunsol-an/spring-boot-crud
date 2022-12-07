@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -24,7 +26,9 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String content;
 
-
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt DESC")
+    private List<Comment> comments = new ArrayList<>();
 
     public Board(BoardRequestDto requestDto, String username) {
         this.title = requestDto.getTitle();
@@ -36,5 +40,9 @@ public class Board extends Timestamped{
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.username = username;
+    }
+
+    public void addComments(Comment comment) {
+        this.comments.add(comment);
     }
 }
