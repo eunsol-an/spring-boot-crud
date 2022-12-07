@@ -6,6 +6,7 @@ import com.sparta.crud.entity.Comment;
 import com.sparta.crud.entity.User;
 import com.sparta.crud.jwt.JwtUtil;
 import com.sparta.crud.repository.BoardRepository;
+import com.sparta.crud.repository.CommentRepository;
 import com.sparta.crud.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -14,24 +15,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BoardService {
+public class CommentService {
 
+    private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
 
+    // 로그인한 회원이 댓글을 등록
     @Transactional
-    public BoardOneResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
+    public BaseResponse addComment(Long id, CommentRequestDto commentRequestDto, HttpServletRequest request) {
+        // 게시글의 DB 저장 유무 확인
+        Board board = boardRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+
         // Request에서 토큰 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        // 토큰이 있는 경우에만 게시글 작성 가능
+        // 토큰이 있는 경우에만 댓글 작성 가능
         if (token != null) {
             if (jwtUtil.validateToken(token)) {
                 // 토큰에서 사용자 정보 가져오기
@@ -46,54 +52,27 @@ public class BoardService {
             );
 
             // 요청 받은 DTO로 DB에 저장할 객체 만들기
-            Board board = boardRepository.saveAndFlush(new Board(requestDto, user.getUsername()));
+            Comment comment = commentRepository.save(new Comment(commentRequestDto, user.getUsername(), board));
 
-            return new BoardOneResponseDto(true, HttpStatus.OK.value(), board);
+            return new CommentOneResponseDto(true, HttpStatus.OK.value(), comment);
 
         } else {
             return  null;
         }
-
-    }
-
-    @Transactional(readOnly = true)
-    public BoardListResponseDto getBoardList() {
-        BoardListResponseDto boardListResponseDto = new BoardListResponseDto(true, HttpStatus.OK.value());
-        List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
-        for (Board board : boardList) {
-            List<CommentToDto> commentList = new ArrayList<>();
-            for (Comment comment : board.getComments()) {
-                commentList.add(new CommentToDto(comment));
-            }
-            boardListResponseDto.addBoard(new BoardToDto(board, commentList));
-        }
-        return boardListResponseDto;
-    }
-
-    @Transactional(readOnly = true)
-    public BoardOneResponseDto getBoard(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-        );
-        List<CommentToDto> commentList = new ArrayList<>();
-        for (Comment comment : board.getComments()) {
-            commentList.add(new CommentToDto(comment));
-        }
-        return new BoardOneResponseDto(true, HttpStatus.OK.value(), board, commentList);
     }
 
     @Transactional
-    public BaseResponse update(Long id, BoardRequestDto requestDto, HttpServletRequest request) {
-        // 영속성 Entity 조회
-//        Board board = boardRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
-//        );
+    public BaseResponse updateComment(Long boardId, Long cmtId, CommentRequestDto commentRequestDto, HttpServletRequest request) {
+        // 게시글의 DB 저장 유무 확인
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
 
         // Request에서 토큰 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        // 토큰이 있는 경우에만 게시글 수정 가능
+        // 토큰이 있는 경우에만 댓글 수정 가능
         if (token != null) {
             if (jwtUtil.validateToken(token)) {
                 // 토큰에서 사용자 정보 가져오기
@@ -107,32 +86,33 @@ public class BoardService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            // 입력 받은 id, 토큰에서 가져온 username과 일치하는 DB 조회
-            Board board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
-                    () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
+            // 댓글의 DB 저장 유무 확인
+            Comment comment = commentRepository.findByIdAndUsername(cmtId, user.getUsername()).orElseThrow(
+                    () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
             );
-            board.update(requestDto, user.getUsername());
 
-            List<CommentToDto> commentList = new ArrayList<>();
-            for (Comment comment : board.getComments()) {
-                commentList.add(new CommentToDto(comment));
-            }
+            // 요청 받은 DTO로 DB에 저장할 객체 만들기
+            comment.update(commentRequestDto);
 
-            return new BoardOneResponseDto(true, HttpStatus.OK.value(), board, commentList);
+            return new CommentOneResponseDto(true, HttpStatus.OK.value(), comment);
 
         } else {
-            return new BaseResponse(false, HttpStatus.NOT_FOUND.value());
+            return  null;
         }
-
     }
 
     @Transactional
-    public BaseResponse deleteBoard(Long id, HttpServletRequest request) {
+    public BaseResponse deleteComment(Long boardId, Long cmtId, HttpServletRequest request) {
+        // 게시글의 DB 저장 유무 확인
+        Board board = boardRepository.findById(boardId).orElseThrow(
+                () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+        );
+
         // Request에서 토큰 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
-        // 토큰이 있는 경우에만 게시글 수정 가능
+        // 토큰이 있는 경우에만 댓글 수정 가능
         if (token != null) {
             if (jwtUtil.validateToken(token)) {
                 // 토큰에서 사용자 정보 가져오기
@@ -146,11 +126,13 @@ public class BoardService {
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
-            // 입력 받은 id, 토큰에서 가져온 username과 일치하는 DB 조회
-            Board board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
-                    () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
+            // 댓글의 DB 저장 유무 확인
+            Comment comment = commentRepository.findByIdAndUsername(cmtId, user.getUsername()).orElseThrow(
+                    () -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
             );
-            boardRepository.deleteById(id);
+
+            // 요청 받은 DTO로 DB에 저장할 객체 만들기
+            commentRepository.deleteById(cmtId);
 
             return new BaseResponse(true, HttpStatus.OK.value());
 
