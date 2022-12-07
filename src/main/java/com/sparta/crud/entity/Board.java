@@ -36,10 +36,9 @@ public class Board extends Timestamped{
         this.username = username;
     }
 
-    public void update(BoardRequestDto requestDto, String username) {
+    public void update(BoardRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.username = username;
     }
 
     public void addComments(Comment comment) {
