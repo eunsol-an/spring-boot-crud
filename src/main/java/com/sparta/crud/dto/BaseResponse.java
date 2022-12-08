@@ -6,12 +6,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class BaseResponse {
-    private int status;
+    private int statusCode;
     private String msg;
 
 
     public BaseResponse(StatusEnum status) {
-        this.status = status.statusCode;
+        this.statusCode = status.statusCode;
         this.msg = status.msg;
     }
 }
