@@ -9,8 +9,8 @@ public class BoardListResponseDto extends BaseResponse {
 
     List<BoardToDto> boradList = new ArrayList<>();
 
-    public BoardListResponseDto(Boolean success, int statusCode) {
-        super(success, statusCode);
+    public BoardListResponseDto(StatusEnum status) {
+        super(status);
     }
 
     public void addBoard(BoardToDto boardToDto) {

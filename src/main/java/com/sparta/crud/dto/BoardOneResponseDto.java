@@ -10,13 +10,13 @@ public class BoardOneResponseDto extends BaseResponse {
 
     private BoardToDto boardOne;
 
-    public BoardOneResponseDto(Boolean success, int statusCode, Board board) {
-        super(success, statusCode);
+    public BoardOneResponseDto(StatusEnum status, Board board) {
+        super(status);
         this.boardOne = new BoardToDto(board);
     }
 
-    public BoardOneResponseDto(Boolean success, int statusCode, Board board, List<CommentToDto> commentList) {
-        super(success, statusCode);
+    public BoardOneResponseDto(StatusEnum status, Board board, List<CommentToDto> commentList) {
+        super(status);
         this.boardOne = new BoardToDto(board, commentList);
     }
 }
