@@ -1,5 +1,11 @@
 # Spring Boot CRUD API
 
+ - [1️⃣ 주특기 입문 주차](https://github.com/eunsol-an/spring-boot-crud/tree/1week)
+ - [2️⃣ 주특기 숙련 주차](https://github.com/eunsol-an/spring-boot-crud/tree/2week)
+ - 3️⃣ 주특기 심화 주차
+ <br>
+
+## 1️⃣ 주특기 입문 주차
 > 🚩 Goal : 스프링 부트로 로그인 기능이 없는 나만의 항해 블로그 백엔드 서버 만들기
 
 ## 📝 목차
@@ -53,4 +59,9 @@
 [🌱Spring Boot로 CRUD API 만들기 2편](https://oneul-losnue.tistory.com/261)
 - 왜 createdAt, modifiedAt 값이 null로 전달될까?
 - @Transactional 없이 update 하기.. 가능할까?
-- 성공 여부를 어떻게 반환하면 좋을까?
+- 성공 여부를 어떻게 반환하면 좋을까? 1
+
+[🌱Spring Boot로 CRUD API 만들기 3편](https://oneul-losnue.tistory.com/263)
+- 성공 여부를 어떻게 반환하면 좋을까? 2
+- 개발 순서는 어디서부터?
+- RESTful한 API가 뭐지?
