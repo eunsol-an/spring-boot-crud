@@ -8,15 +8,17 @@ import com.sparta.crud.entity.UserRoleEnum;
 import com.sparta.crud.jwt.JwtUtil;
 import com.sparta.crud.repository.BoardRepository;
 import com.sparta.crud.repository.UserRepository;
+import com.sparta.crud.util.exception.CutomException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sparta.crud.util.exception.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,7 @@ public class BoardService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public BoardOneResponseDto createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
+    public BaseResponse createBoard(BoardRequestDto requestDto, HttpServletRequest request) {
         // Request에서 토큰 가져오기
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -38,28 +40,28 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new CutomException(INVALID_TOKEN);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new CutomException(NOT_FOUND_USER)
             );
 
             // 요청 받은 DTO로 DB에 저장할 객체 만들기
             Board board = boardRepository.saveAndFlush(new Board(requestDto, user.getUsername()));
 
-            return new BoardOneResponseDto(true, HttpStatus.OK.value(), board);
+            return new BoardOneResponseDto(StatusEnum.OK, board);
 
         } else {
-            return  null;
+            throw new CutomException(INVALID_TOKEN);
         }
 
     }
 
     @Transactional(readOnly = true)
-    public BoardListResponseDto getBoardList() {
-        BoardListResponseDto boardListResponseDto = new BoardListResponseDto(true, HttpStatus.OK.value());
+    public BaseResponse getBoardList() {
+        BoardListResponseDto boardListResponseDto = new BoardListResponseDto(StatusEnum.OK);
         List<Board> boardList = boardRepository.findAllByOrderByCreatedAtDesc();
         for (Board board : boardList) {
             List<CommentToDto> commentList = new ArrayList<>();
@@ -72,7 +74,7 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardOneResponseDto getBoard(Long id) {
+    public BaseResponse getBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
         );
@@ -80,7 +82,7 @@ public class BoardService {
         for (Comment comment : board.getComments()) {
             commentList.add(new CommentToDto(comment));
         }
-        return new BoardOneResponseDto(true, HttpStatus.OK.value(), board, commentList);
+        return new BoardOneResponseDto(StatusEnum.OK, board, commentList);
     }
 
     @Transactional
@@ -100,12 +102,12 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new CutomException(INVALID_TOKEN);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new CutomException(NOT_FOUND_USER)
             );
 
             // 사용자 권한 가져와서 ADMIN 이면 무조건 수정 가능, USER 면 본인이 작성한 글일 때만 수정 가능
@@ -116,13 +118,13 @@ public class BoardService {
             if (userRoleEnum == UserRoleEnum.ADMIN) {
                 // 입력 받은 게시글 id와 일치하는 DB 조회
                 board = boardRepository.findById(id).orElseThrow(
-                        () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                        () -> new CutomException(NOT_FOUND_BOARD)
                 );
 
             } else {
                 // 입력 받은 게시글 id, 토큰에서 가져온 username과 일치하는 DB 조회
                 board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
-                        () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
+                        () -> new CutomException(AUTHORIZATION)
                 );
             }
 
@@ -133,10 +135,10 @@ public class BoardService {
                 commentList.add(new CommentToDto(comment));
             }
 
-            return new BoardOneResponseDto(true, HttpStatus.OK.value(), board, commentList);
+            return new BoardOneResponseDto(StatusEnum.OK, board, commentList);
 
         } else {
-            return new BaseResponse(false, HttpStatus.NOT_FOUND.value());
+            throw new CutomException(INVALID_TOKEN);
         }
 
     }
@@ -153,12 +155,12 @@ public class BoardService {
                 // 토큰에서 사용자 정보 가져오기
                 claims = jwtUtil.getUserInfoFromToken(token);
             } else {
-                throw new IllegalArgumentException("Token Error");
+                throw new CutomException(INVALID_TOKEN);
             }
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
             User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
-                    () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+                    () -> new CutomException(NOT_FOUND_USER)
             );
 
             // 사용자 권한 가져와서 ADMIN 이면 무조건 삭제 가능, USER 면 본인이 작성한 글일 때만 삭제 가능
@@ -169,22 +171,22 @@ public class BoardService {
             if (userRoleEnum == UserRoleEnum.ADMIN) {
                 // 입력 받은 게시글 id와 일치하는 DB 조회
                 board = boardRepository.findById(id).orElseThrow(
-                        () -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+                        () -> new CutomException(NOT_FOUND_BOARD)
                 );
 
             } else {
                 // 입력 받은 게시글 id, 토큰에서 가져온 username과 일치하는 DB 조회
                 board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
-                        () -> new IllegalArgumentException("해당하는 게시글이 존재하지 않습니다.")
+                        () -> new CutomException(AUTHORIZATION)
                 );
             }
 
             boardRepository.deleteById(id);
 
-            return new BaseResponse(true, HttpStatus.OK.value());
+            return new BaseResponse(StatusEnum.OK);
 
         } else {
-            return new BaseResponse(false, HttpStatus.NOT_FOUND.value());
+            throw new CutomException(INVALID_TOKEN);
         }
     }
 }

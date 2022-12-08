@@ -6,17 +6,15 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class BoardOneResponseDto extends BaseResponse {
+public class BoardResponseDto{
 
     private BoardToDto boardOne;
 
-    public BoardOneResponseDto(StatusEnum status, Board board) {
-        super(status);
+    public BoardResponseDto(Board board) {
         this.boardOne = new BoardToDto(board);
     }
 
-    public BoardOneResponseDto(StatusEnum status, Board board, List<CommentToDto> commentList) {
-        super(status);
+    public BoardResponseDto(Board board, List<CommentToDto> commentList) {
         this.boardOne = new BoardToDto(board, commentList);
     }
 }
