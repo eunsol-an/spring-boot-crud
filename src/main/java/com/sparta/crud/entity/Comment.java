@@ -15,20 +15,25 @@ public class Comment extends Timestamped{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "BOARD_ID", nullable = false)
+    private Board board;
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
+
     @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
     private String comment;
 
-    @ManyToOne
-    @JoinColumn(name = "BOARD_ID", nullable = false)
-    private Board board;
-
-    public Comment(CommentRequestDto commentRequestDto, String username, Board board) {
+    public Comment(CommentRequestDto commentRequestDto, Board board, User user) {
         this.comment = commentRequestDto.getComment();
-        this.username = username;
+        this.username = user.getUsername();
         this.board = board;
+        this.user = user;
     }
 
     public void update(CommentRequestDto commentRequestDto) {

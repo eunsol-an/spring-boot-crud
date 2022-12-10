@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByOrderByCreatedAtDesc();
-    Optional<Board> findByIdAndUsername(Long id, String username);
+    Optional<Board> findByIdAndUserId(Long id, Long UserId);
 }
