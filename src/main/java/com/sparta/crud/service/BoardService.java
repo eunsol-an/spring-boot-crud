@@ -49,7 +49,7 @@ public class BoardService {
             );
 
             // 요청 받은 DTO로 DB에 저장할 객체 만들기
-            Board board = boardRepository.saveAndFlush(new Board(requestDto, user.getUsername()));
+            Board board = boardRepository.saveAndFlush(new Board(requestDto, user));
 
             return new BoardOneResponseDto(StatusEnum.OK, board);
 
@@ -122,8 +122,8 @@ public class BoardService {
                 );
 
             } else {
-                // 입력 받은 게시글 id, 토큰에서 가져온 username과 일치하는 DB 조회
-                board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                // 입력 받은 게시글 id, 토큰에서 가져온 userId와 일치하는 DB 조회
+                board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                         () -> new CutomException(AUTHORIZATION)
                 );
             }
@@ -175,8 +175,8 @@ public class BoardService {
                 );
 
             } else {
-                // 입력 받은 게시글 id, 토큰에서 가져온 username과 일치하는 DB 조회
-                board = boardRepository.findByIdAndUsername(id, user.getUsername()).orElseThrow(
+                // 입력 받은 게시글 id, 토큰에서 가져온 userId와 일치하는 DB 조회
+                board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
                         () -> new CutomException(AUTHORIZATION)
                 );
             }

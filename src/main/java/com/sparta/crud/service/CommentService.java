@@ -12,7 +12,6 @@ import com.sparta.crud.repository.UserRepository;
 import com.sparta.crud.util.exception.CutomException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +54,7 @@ public class CommentService {
             );
 
             // 요청 받은 DTO로 DB에 저장할 객체 만들기
-            Comment comment = commentRepository.save(new Comment(commentRequestDto, user.getUsername(), board));
+            Comment comment = commentRepository.save(new Comment(commentRequestDto, board, user));
 
             return new CommentOneResponseDto(StatusEnum.OK, comment);
 
@@ -100,8 +99,8 @@ public class CommentService {
                         () -> new CutomException(NOT_FOUND_COMMENT)
                 );
             } else {
-                // 입력 받은 댓글 id, 토큰에서 가져온 username과 일치하는 DB 조회
-                comment = commentRepository.findByIdAndUsername(cmtId, user.getUsername()).orElseThrow(
+                // 입력 받은 댓글 id, 토큰에서 가져온 userId와 일치하는 DB 조회
+                comment = commentRepository.findByIdAndUserId(cmtId, user.getId()).orElseThrow(
                         () -> new CutomException(AUTHORIZATION)
                 );
             }
@@ -152,8 +151,8 @@ public class CommentService {
                         () -> new CutomException(NOT_FOUND_COMMENT)
                 );
             } else {
-                // 입력 받은 댓글 id, 토큰에서 가져온 username과 일치하는 DB 조회
-                comment = commentRepository.findByIdAndUsername(cmtId, user.getUsername()).orElseThrow(
+                // 입력 받은 댓글 id, 토큰에서 가져온 userId와 일치하는 DB 조회
+                comment = commentRepository.findByIdAndUserId(cmtId, user.getId()).orElseThrow(
                         () -> new CutomException(AUTHORIZATION)
                 );
             }

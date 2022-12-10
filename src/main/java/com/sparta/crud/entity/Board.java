@@ -17,6 +17,14 @@ public class Board extends Timestamped{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt DESC")
+    private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
+
     @Column(nullable = false)
     private String title;
 
@@ -26,22 +34,15 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    @OrderBy("createdAt DESC")
-    private List<Comment> comments = new ArrayList<>();
-
-    public Board(BoardRequestDto requestDto, String username) {
+    public Board(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.username = username;
+        this.username = user.getUsername();
+        this.user = user;
     }
 
     public void update(BoardRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-    }
-
-    public void addComments(Comment comment) {
-        this.comments.add(comment);
     }
 }
