@@ -23,7 +23,8 @@ public class UserController {
 
     // 회원 가입(아이디 중복검사 포함)
     @PostMapping("/signup")
-    public ResponseEntity<BaseResponse> signup(@RequestBody @Valid SignupRequestDto signupRequestDto) {
+    public ResponseEntity<BaseResponse> signup(
+            @RequestBody @Valid SignupRequestDto signupRequestDto) {
         return ResponseEntity.ok().body(userService.signup(signupRequestDto));
     }
 

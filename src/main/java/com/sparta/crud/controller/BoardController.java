@@ -1,12 +1,16 @@
 package com.sparta.crud.controller;
 
 import com.sparta.crud.dto.*;
+import com.sparta.crud.entity.UserRoleEnum;
+import com.sparta.crud.security.UserDetailsImpl;
 import com.sparta.crud.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,9 +24,12 @@ public class BoardController {
     private final BoardService boardService;
 
     // 게시글 작성
+    @Secured(UserRoleEnum.Authority.ADMIN)
     @PostMapping
-    public ResponseEntity<BaseResponse> createBorad(@RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
-        return ResponseEntity.ok().body(boardService.createBoard(requestDto, request));
+    public ResponseEntity<BaseResponse> createBorad(
+            @RequestBody BoardRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.createBoard(requestDto, userDetails.getUser()));
     }
 
     // 전체 게시글 조회
@@ -39,13 +46,18 @@ public class BoardController {
 
     // 게시글 수정
     @PutMapping("/{id}")
-    public ResponseEntity<BaseResponse> updateBoard(@PathVariable Long id, @RequestBody BoardRequestDto requestDto, HttpServletRequest request) {
-        return ResponseEntity.ok().body(boardService.update(id, requestDto, request));
+    public ResponseEntity<BaseResponse> updateBoard(
+            @PathVariable Long id,
+            @RequestBody BoardRequestDto requestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.update(id, requestDto, userDetails.getUser()));
     }
 
     // 게시글 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse> deleteBoard(@PathVariable Long id, HttpServletRequest request) {
-        return ResponseEntity.ok().body(boardService.deleteBoard(id, request));
+    public ResponseEntity<BaseResponse> deleteBoard(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.deleteBoard(id, userDetails.getUser()));
     }
 }
