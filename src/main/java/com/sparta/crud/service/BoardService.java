@@ -6,7 +6,7 @@ import com.sparta.crud.entity.Comment;
 import com.sparta.crud.entity.User;
 import com.sparta.crud.entity.UserRoleEnum;
 import com.sparta.crud.repository.BoardRepository;
-import com.sparta.crud.util.exception.CutomException;
+import com.sparta.crud.util.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +47,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BaseResponse getBoard(Long id) {
         Board board = boardRepository.findById(id).orElseThrow(
-                () -> new CutomException(NOT_FOUND_BOARD)
+                () -> new CustomException(NOT_FOUND_BOARD)
         );
         List<CommentToDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
@@ -71,13 +71,13 @@ public class BoardService {
         if (userRoleEnum == UserRoleEnum.ADMIN) {
             // 입력 받은 게시글 id와 일치하는 DB 조회
             board = boardRepository.findById(id).orElseThrow(
-                    () -> new CutomException(NOT_FOUND_BOARD)
+                    () -> new CustomException(NOT_FOUND_BOARD)
             );
 
         } else {
             // 입력 받은 게시글 id, 토큰에서 가져온 userId와 일치하는 DB 조회
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new CutomException(AUTHORIZATION)
+                    () -> new CustomException(AUTHORIZATION)
             );
         }
 
@@ -103,13 +103,13 @@ public class BoardService {
         if (userRoleEnum == UserRoleEnum.ADMIN) {
             // 입력 받은 게시글 id와 일치하는 DB 조회
             board = boardRepository.findById(id).orElseThrow(
-                    () -> new CutomException(NOT_FOUND_BOARD)
+                    () -> new CustomException(NOT_FOUND_BOARD)
             );
 
         } else {
             // 입력 받은 게시글 id, 토큰에서 가져온 userId와 일치하는 DB 조회
             board = boardRepository.findByIdAndUserId(id, user.getId()).orElseThrow(
-                    () -> new CutomException(AUTHORIZATION)
+                    () -> new CustomException(AUTHORIZATION)
             );
         }
 

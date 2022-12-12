@@ -1,20 +1,13 @@
 package com.sparta.crud.controller;
 
 import com.sparta.crud.dto.*;
-import com.sparta.crud.entity.UserRoleEnum;
 import com.sparta.crud.security.UserDetailsImpl;
 import com.sparta.crud.service.BoardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.Charset;
 
 @RestController
 @RequestMapping("/api/board")
@@ -24,7 +17,7 @@ public class BoardController {
     private final BoardService boardService;
 
     // 게시글 작성
-    @Secured(UserRoleEnum.Authority.ADMIN)
+//    @Secured(UserRoleEnum.Authority.ADMIN)
     @PostMapping
     public ResponseEntity<BaseResponse> createBorad(
             @RequestBody BoardRequestDto requestDto,

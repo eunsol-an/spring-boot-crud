@@ -8,7 +8,7 @@ import com.sparta.crud.entity.User;
 import com.sparta.crud.entity.UserRoleEnum;
 import com.sparta.crud.jwt.JwtUtil;
 import com.sparta.crud.repository.UserRepository;
-import com.sparta.crud.util.exception.CutomException;
+import com.sparta.crud.util.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,14 +38,14 @@ public class UserService {
         // 회원 중복 확인
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            throw new CutomException(DUPLICATED_USERNAME);
+            throw new CustomException(DUPLICATED_USERNAME);
         }
 
         // 사용자 ROLE 확인
         UserRoleEnum role = UserRoleEnum.USER;
         if (signupRequestDto.isAdmin()) {
             if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-                throw new CutomException(INVALID_AUTH_TOKEN);
+                throw new CustomException(INVALID_AUTH_TOKEN);
             }
             role = UserRoleEnum.ADMIN;
         }
@@ -62,12 +62,12 @@ public class UserService {
 
         // 사용자 확인
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new CutomException(NOT_FOUND_USER)
+                () -> new CustomException(NOT_FOUND_USER)
         );
 
         // 비밀번호 확인
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new CutomException(NOT_FOUND_USER);
+            throw new CustomException(NOT_FOUND_USER);
         }
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername(), user.getRole()));
         return new BaseResponse(StatusEnum.OK);
