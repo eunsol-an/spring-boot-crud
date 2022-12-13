@@ -24,7 +24,6 @@ public class BoardToDto {
         this.title = board.getTitle();
         this.username = board.getUsername();
         this.content = board.getContent();
-        this.likeCount = board.getLikeCount();
         this.likeCheck = false;
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
@@ -35,8 +34,8 @@ public class BoardToDto {
         this.title = board.getTitle();
         this.username = board.getUsername();
         this.content = board.getContent();
-        this.likeCount = board.getLikeCount();
         this.likeCheck = boardLikeCheck;
+        this.likeCount = board.getBoardLikeList().size();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
         this.commentList = commentList;

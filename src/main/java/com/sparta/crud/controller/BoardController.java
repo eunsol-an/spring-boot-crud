@@ -55,4 +55,12 @@ public class BoardController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(boardService.deleteBoard(id, userDetails.getUser()));
     }
+
+    // 게시글 좋아요
+    @PostMapping("/like/{boardId}")
+    public ResponseEntity<BaseResponse> saveBoardLike(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.saveBoardLike(boardId, userDetails.getUser()));
+    }
 }

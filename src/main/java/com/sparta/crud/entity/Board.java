@@ -21,6 +21,9 @@ public class Board extends Timestamped{
     @OrderBy("createdAt DESC")
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    private List<BoardLike> boardLikeList = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
@@ -34,23 +37,16 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private int likeCount;
 
     public Board(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.username = user.getUsername();
-        this.likeCount = 0;
         this.user = user;
     }
 
     public void update(BoardRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-    }
-
-    public void updateLikeCount(int num) {
-        this.likeCount += num;
     }
 }
