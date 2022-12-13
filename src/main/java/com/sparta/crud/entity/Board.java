@@ -34,15 +34,23 @@ public class Board extends Timestamped{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private int likeCount;
+
     public Board(BoardRequestDto requestDto, User user) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.username = user.getUsername();
+        this.likeCount = 0;
         this.user = user;
     }
 
     public void update(BoardRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
+    }
+
+    public void updateLikeCount(int num) {
+        this.likeCount += num;
     }
 }

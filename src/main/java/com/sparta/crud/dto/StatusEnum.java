@@ -2,7 +2,9 @@ package com.sparta.crud.dto;
 
 public enum StatusEnum {
 
-    OK(200, "성공");
+    OK(200, "성공"),
+    PLUS_BOARD_LIKE(200, "좋아요 완료"),
+    MINUS_BOARD_LIKE(200, "좋아요 취소");
 
     int statusCode;
     String msg;

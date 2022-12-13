@@ -15,8 +15,8 @@ public class BoardOneResponseDto extends BaseResponse {
         this.boardOne = new BoardToDto(board);
     }
 
-    public BoardOneResponseDto(StatusEnum status, Board board, List<CommentToDto> commentList) {
+    public BoardOneResponseDto(StatusEnum status, Board board, List<CommentToDto> commentList, boolean boardLikeCheck) {
         super(status);
-        this.boardOne = new BoardToDto(board, commentList);
+        this.boardOne = new BoardToDto(board, commentList, boardLikeCheck);
     }
 }
