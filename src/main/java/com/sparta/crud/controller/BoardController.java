@@ -27,14 +27,16 @@ public class BoardController {
 
     // 전체 게시글 조회
     @GetMapping
-    public ResponseEntity<BaseResponse> getBoardList() {
-        return ResponseEntity.ok().body(boardService.getBoardList());
+    public ResponseEntity<BaseResponse> getBoardList(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.getBoardList(userDetails.getUser()));
     }
 
     // 게시글 상세 조회
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse> getBoard(@PathVariable Long id) {
-        return ResponseEntity.ok().body(boardService.getBoard(id));
+    public ResponseEntity<BaseResponse> getBoard(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.getBoard(id, userDetails.getUser()));
     }
 
     // 게시글 수정
@@ -52,5 +54,13 @@ public class BoardController {
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok().body(boardService.deleteBoard(id, userDetails.getUser()));
+    }
+
+    // 게시글 좋아요
+    @PostMapping("/like/{boardId}")
+    public ResponseEntity<BaseResponse> saveBoardLike(
+            @PathVariable Long boardId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(boardService.saveBoardLike(boardId, userDetails.getUser()));
     }
 }
