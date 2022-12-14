@@ -28,21 +28,29 @@ public class CommentController {
     }
 
     // 댓글 수정
-    @PutMapping("/{boardId}/{cmtId}")
+    @PutMapping("/{boardId}/{commentId}")
     public ResponseEntity<BaseResponse> updateComment(
             @PathVariable Long boardId,
-            @PathVariable Long cmtId,
+            @PathVariable Long commentId,
             @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(commentService.updateComment(boardId, cmtId, commentRequestDto, userDetails.getUser()));
+        return ResponseEntity.ok().body(commentService.updateComment(boardId, commentId, commentRequestDto, userDetails.getUser()));
     }
 
     // 댓글 삭제
-    @DeleteMapping("/{boardId}/{cmtId}")
+    @DeleteMapping("/{boardId}/{commentId}")
     public ResponseEntity<BaseResponse> deleteComment(
             @PathVariable Long boardId,
-            @PathVariable Long cmtId,
+            @PathVariable Long commentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok().body(commentService.deleteComment(boardId, cmtId, userDetails.getUser()));
+        return ResponseEntity.ok().body(commentService.deleteComment(boardId, commentId, userDetails.getUser()));
+    }
+
+    // 댓글 좋아요
+    @PostMapping("/like/{commentId}")
+    public ResponseEntity<BaseResponse> saveCommentLike(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok().body(commentService.saveCommentLike(commentId, userDetails.getUser()));
     }
 }

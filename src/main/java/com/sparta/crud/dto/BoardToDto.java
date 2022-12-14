@@ -12,8 +12,8 @@ public class BoardToDto {
     private String title;
     private String username;
     private String content;
-    private int likeCount;
-    private boolean likeCheck;
+    private int boardLikeCount;
+    private boolean boardLikeCheck;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
@@ -24,7 +24,8 @@ public class BoardToDto {
         this.title = board.getTitle();
         this.username = board.getUsername();
         this.content = board.getContent();
-        this.likeCheck = false;
+        this.boardLikeCount = board.getBoardLikeList().size();
+        this.boardLikeCheck = false;
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
     }
@@ -34,8 +35,8 @@ public class BoardToDto {
         this.title = board.getTitle();
         this.username = board.getUsername();
         this.content = board.getContent();
-        this.likeCheck = boardLikeCheck;
-        this.likeCount = board.getBoardLikeList().size();
+        this.boardLikeCount = board.getBoardLikeList().size();
+        this.boardLikeCheck = boardLikeCheck;
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
         this.commentList = commentList;

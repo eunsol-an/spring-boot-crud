@@ -4,6 +4,7 @@ import com.sparta.crud.dto.*;
 import com.sparta.crud.entity.*;
 import com.sparta.crud.repository.BoardLikeRepository;
 import com.sparta.crud.repository.BoardRepository;
+import com.sparta.crud.repository.CommentLikeRepository;
 import com.sparta.crud.util.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public BaseResponse createBoard(BoardRequestDto requestDto, User user) {
@@ -37,7 +39,7 @@ public class BoardService {
         for (Board board : boardList) {
             List<CommentToDto> commentList = new ArrayList<>();
             for (Comment comment : board.getComments()) {
-                commentList.add(new CommentToDto(comment));
+                commentList.add(new CommentToDto(comment, checkCommentLike(comment.getId(), user)));
             }
             boardListResponseDto.addBoard(new BoardToDto(
                     board,
@@ -55,7 +57,7 @@ public class BoardService {
         );
         List<CommentToDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentToDto(comment));
+            commentList.add(new CommentToDto(comment, checkCommentLike(comment.getId(), user)));
         }
         return new BoardOneResponseDto(
                 StatusEnum.OK,
@@ -93,7 +95,7 @@ public class BoardService {
 
         List<CommentToDto> commentList = new ArrayList<>();
         for (Comment comment : board.getComments()) {
-            commentList.add(new CommentToDto(comment));
+            commentList.add(new CommentToDto(comment, checkCommentLike(comment.getId(), user)));
         }
 
         return new BoardOneResponseDto(StatusEnum.OK, board, commentList, (checkBoardLike(board.getId(), user)));
@@ -141,10 +143,16 @@ public class BoardService {
         // 해당 회원의 좋아요 여부를 확인하고 비어있으면 좋아요, 아니면 좋아요 취소
         if (!checkBoardLike(boardId, user)) {
             boardLikeRepository.saveAndFlush(new BoardLike(board, user));
-            return new BaseResponse(StatusEnum.PLUS_BOARD_LIKE);
+            return new BaseResponse(StatusEnum.PLUS_LIKE);
         } else {
             boardLikeRepository.deleteByBoardIdAndUserId(boardId, user.getId());
-            return new BaseResponse(StatusEnum.MINUS_BOARD_LIKE);
+            return new BaseResponse(StatusEnum.MINUS_LIKE);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkCommentLike(Long commentId, User user) {
+        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentIdAndUserId(commentId, user.getId());
+        return commentLike.isPresent();
     }
 }
