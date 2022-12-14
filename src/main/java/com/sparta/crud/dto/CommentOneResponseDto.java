@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class CommentOneResponseDto extends BaseResponse {
     CommentToDto commentOne;
-    public CommentOneResponseDto(StatusEnum status, Comment comment) {
+    public CommentOneResponseDto(StatusEnum status, Comment comment, boolean commentLikeCheck) {
         super(status);
-        this.commentOne = new CommentToDto(comment);
+        this.commentOne = new CommentToDto(comment, commentLikeCheck);
     }
 }
