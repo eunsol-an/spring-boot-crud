@@ -1,8 +1,8 @@
 # Spring Boot CRUD API
 
- - [1️⃣ 주특기 입문 주차](https://github.com/eunsol-an/spring-boot-crud/tree/1week)
+ - 1️⃣ 주특기 입문 주차
  - [2️⃣ 주특기 숙련 주차](https://github.com/eunsol-an/spring-boot-crud/tree/2week)
- - 3️⃣ 주특기 심화 주차
+ - [3️⃣ 주특기 심화 주차](https://github.com/eunsol-an/spring-boot-crud/tree/3week)
  <br>
 
 ## 1️⃣ 주특기 입문 주차
